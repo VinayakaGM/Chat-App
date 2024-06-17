@@ -13,6 +13,7 @@ let userSchema = new Schema({
         required: [true, "Email is required field"],
         trim: true,
         validate:[isEmail, "Email is invalid"],
+        unique: true
     },
     password:{
         type: "String",
