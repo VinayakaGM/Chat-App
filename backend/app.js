@@ -10,7 +10,7 @@ app.use(express.json())
 app.use(express.urlencoded({extended: true}))
 
 //user
-app.use("/api/v1/users", userRouter)
+app.use("/api/v1/user", userRouter)
 
 app.get('/', (req, res) => {
     res.send('Welcome')
