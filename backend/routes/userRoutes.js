@@ -1,9 +1,10 @@
-import {Router} from 'express'
-import {signup} from "../controllers/userControllers.js"
+import { Router } from "express";
+import { signup } from "../controllers/userControllers.js";
+import upload from "../middlewares/uploadFile.js";
 
-const userRouter = Router()
+const userRouter = Router();
 
-userRouter.post("/signup", signup)
+userRouter.post("/signup", upload.single("photo"), signup);
 // userRouter.post("/login", login)
 
-export default userRouter
+export default userRouter;

@@ -2,7 +2,8 @@ import User from "../models/Users.js";
 
 export const signup = async (req, res) => {
   try {
-    let { name, email, password, confirmPassword} = req.body;
+    // console.log(req.file);
+    let { name, email, password, confirmPassword } = req.body;
     let existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({
@@ -15,9 +16,10 @@ export const signup = async (req, res) => {
       email,
       password,
       confirmPassword,
+      photo:req.file.path
     });
 
-     res.status(200).json({
+    res.status(200).json({
       success: true,
       user: newUser,
     });
