@@ -1,4 +1,5 @@
 import { Schema, model } from "mongoose";
+import bcrypt from 'bcryptjs'
 // import {isEmail} from 'express-validator'
 
 let userSchema = new Schema({
@@ -38,6 +39,17 @@ let userSchema = new Schema({
 }, {
     timestamps: true,
 })
+
+//pre-hook
+userSchema.pre("save", async function(next) {
+    this.password = await bcrypt.hash(this.password, 10)
+    next()
+})
+
+//methods
+userSchema.methods.verifyPassword = async function(pwd, pwdDB){
+    return await bcrypt.compare(pwd,pwdDB)
+}
 
 let User = model('User', userSchema)
 
