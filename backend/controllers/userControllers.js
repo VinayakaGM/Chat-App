@@ -7,12 +7,14 @@ export const signup = asyncHandler(async (req, res) => {
   // try {
   // console.log(req.file);
   let { name, email, password, confirmPassword } = req.body;
-  let existingUser = await User.findOne({ email });
+  const existingUser = await User.findOne({ email });
+  console.log(name, email, password, confirmPassword);
   if (existingUser) {
-    return res.status(400).json({
-      success: false,
-      message: "user already exists, try to login",
-    });
+    // return res.status(400).json({
+    //   success: false,
+    //   message: "user already exists, try to login",
+    // });
+    throw new Error("User already exists")
   }
   let newUser = await User.create({
     name,
@@ -41,7 +43,8 @@ export const signup = asyncHandler(async (req, res) => {
 export const login = asyncHandler(async (req, res,next) => {
   // try {
   let { email, password } = req.body;
-  let existingUser = await User.find({ email });
+  const existingUser = await User.findOne({ email });
+  console.log(existingUser);
   if (!existingUser || !(await existingUser.verifyPassword(password, existingUser.password))) {
     let err = new Error("user does not exist, please signup")
     next(err)

@@ -1,8 +1,4 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+
 
 .signup_container {
   display: flex;
@@ -39,7 +35,7 @@
 .signup_form .btn {
     margin-top: 5px;
     padding: 10px 20px;
-    font-size: large;
+    font-size: 1.2rem;
     cursor: pointer;
     border: none;
     border-radius: 6px;

@@ -1,0 +1,17 @@
+.navbar{
+    height: 75px;
+    background-color: lightblue;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.navbar a {
+    padding: 10px 20px;
+    text-decoration: none;
+}
+
+.navbar a:active{
+    color: red;
+}
