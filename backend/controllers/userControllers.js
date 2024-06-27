@@ -1,21 +1,26 @@
 import User from "../models/Users.js";
 import asyncHandler from "express-async-handler";
 import { genToken } from "../utils/genToken.js";
-
+// import { validationResult } from "express-validator";
 
 export const signup = asyncHandler(async (req, res) => {
   // try {
   // console.log(req.file);
+  // const errors = validationResult(req);
+  // if (!errors.isEmpty()) {
+  //   return res.status(400).json({ errors: errors.array() });
+  // }
   let { name, email, password, confirmPassword } = req.body;
   const existingUser = await User.findOne({ email });
-  console.log(name, email, password, confirmPassword);
+  // console.log(name, email, password, confirmPassword);
   if (existingUser) {
     // return res.status(400).json({
     //   success: false,
     //   message: "user already exists, try to login",
     // });
-    throw new Error("User already exists")
+    throw new Error("User already exists");
   }
+
   let newUser = await User.create({
     name,
     email,
@@ -40,14 +45,17 @@ export const signup = asyncHandler(async (req, res) => {
 //   }
 // };
 
-export const login = asyncHandler(async (req, res,next) => {
+export const login = asyncHandler(async (req, res, next) => {
   // try {
   let { email, password } = req.body;
   const existingUser = await User.findOne({ email });
-  console.log(existingUser);
-  if (!existingUser || !(await existingUser.verifyPassword(password, existingUser.password))) {
-    let err = new Error("user does not exist, please signup")
-    next(err)
+  // console.log(existingUser);
+  if (
+    !existingUser ||
+    !(await existingUser.verifyPassword(password, existingUser.password))
+  ) {
+    let err = new Error("user does not exist, please signup");
+    next(err);
     // return res.status(400).json({
     //   success: false,
     //   message: "user does not exist, please singup",
@@ -57,7 +65,7 @@ export const login = asyncHandler(async (req, res,next) => {
   res.status(200).json({
     success: true,
     user: existingUser,
-    token
+    token,
   });
 });
 //   } catch (error) {
@@ -67,3 +75,27 @@ export const login = asyncHandler(async (req, res,next) => {
 //     });
 //   }
 // };
+
+export const searchUsers = async (req, res, next) => {
+  let userId = req.userId;
+  let keyword = req.query.search
+    ? {
+        or$: [
+          { name: { $regex: req.query.search, $options: "i" } },
+          { email: { $regex: req.query.search, $options: "i" } },
+        ],
+      }
+    : {};
+
+  let users = await User.find(keyword)
+    .find({
+      _id: { $ne: userId },
+    })
+    .exec();
+
+  if (!users) {
+    let err = new Error("Users not found");
+    next(err);
+  }
+  res.status(200).json(users);
+};
