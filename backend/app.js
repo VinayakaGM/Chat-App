@@ -4,6 +4,7 @@ import dotenv from 'dotenv'
 import userRouter from './routes/userRoutes.js';
 import cors from 'cors'
 import { globalErrorHandler } from './middlewares/globalErrorHandler.js';
+import chatRoute from './routes/chatRoute.js';
 const app = express();
 dotenv.config()
 db()
@@ -15,6 +16,7 @@ app.use(express.urlencoded({extended: true}))
 
 //user
 app.use("/api/v1/user", userRouter)
+app.use("/api/v1/chat",chatRoute)
 
 app.all("*", (req,res,next) => {
     let err = new Error(`Page not found: ${req.originalUrl}`)

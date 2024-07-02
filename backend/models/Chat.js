@@ -10,12 +10,16 @@ let chatSchema = new Schema(
       default: false,
     },
     users: {
-      type: [{ type: Schema.Types.ObjectId, ref: "Users" }],
+      type: [{ type: Schema.Types.ObjectId, ref: "User" }],
     },
     latestMessage: {
       type: Schema.Types.ObjectId,
       ref: "Message",
     },
+    groupAdmin:{
+      type:Schema.Types.ObjectId,
+      ref:"Users"
+    }
   },
   {
     timestamps: true,
