@@ -3,7 +3,7 @@ import Chat from "../models/Chat.js";
 
 //@description   Create or fetch one-on-one chat
 //@Path          POST /api/v1/chat
-//@access         Private 
+//@access         Private
 
 export const accessChat = asyncHandler(async (req, res, next) => {
   const { userId } = req.body;
@@ -24,7 +24,7 @@ export const accessChat = asyncHandler(async (req, res, next) => {
       },
     ],
   })
-    .populate("users", "-password", "-confirmPassword")
+    .populate("users", "-password -confirmPassword")
     .populate("latestMessage");
 
   isChat = await Chat.populate(isChat, {
@@ -53,16 +53,16 @@ export const accessChat = asyncHandler(async (req, res, next) => {
   }
 });
 
-
 //@description   fetch all chats for the logged in user
 //@Path          GET /api/v1/chat
-//@access         Private 
+//@access         Private
 
 export const fetchChats = asyncHandler(async (req, res, next) => {
   let chats = await Chat.find({ users: { $elemMatch: { $eq: req.userId } } })
     .populate("users", "-password")
     .populate("groupAdmin", "-password")
-    .populate("latestMessage").sort({updatedAt:-1});
+    .populate("latestMessage")
+    .sort({ updatedAt: -1 });
 
   let finalChats = await Chat.populate(chats, {
     path: "latestMessage.sender",
@@ -74,7 +74,7 @@ export const fetchChats = asyncHandler(async (req, res, next) => {
 
 //@description   create group chat
 //@Path          post /api/v1/chat/group
-//@access         Private 
+//@access         Private
 
 export const createGroup = asyncHandler(async (req, res, next) => {
   if (!req.body.users || !req.body.chatName) {
@@ -83,7 +83,7 @@ export const createGroup = asyncHandler(async (req, res, next) => {
 
   let users = JSON.parse(req.body.users.replace(/'/g, '"'));
 
-  if (users<2) {
+  if (users < 2) {
     res.status(400).json("To create group there must be atleast 2 users");
   }
 
@@ -97,19 +97,74 @@ export const createGroup = asyncHandler(async (req, res, next) => {
       groupAdmin: req.userId,
     });
 
+    // console.log(groupChat)
+
     groupChat = await Chat.findById(groupChat._id)
       .populate("users", "-password -confirmPassword")
       .populate("groupAdmin", "-password -confirmPassword")
       .populate("latestMessage");
+
+    // console.log(groupChat)
 
     groupChat = await Chat.populate(groupChat, {
       path: "latestMessage.sender",
       select: "name email photo",
     });
     res.status(201).json(groupChat);
-    
   } catch (error) {
     let err = new Error(error.message);
     next(err);
   }
+});
+
+export const renameGroup = asyncHandler(async (req, res, next) => {
+  const { chatId, chatName } = req.body;
+
+  let updatedChat = await Chat.findByIdAndUpdate(
+    chatId,
+    { chatName },
+    { new: true }
+  )
+    .populate("users", "-password -confirmPassword")
+    .populate("groupAdmin", "-password -confirmPassword");
+
+  if (!updatedChat) {
+    return res.status(400).json("Chat does't exist");
+  }
+  res.status(201).json(updatedChat);
+});
+
+export const addPerson = asyncHandler(async (req, res) => {
+  const { chatId, userId } = req.body;
+
+  let updatedGroup = await Chat.findByIdAndUpdate(
+    chatId,
+    { $push: { users: userId } },
+    { new: true }
+  )
+    .populate("users", "-password -confirmPassword")
+    .populate("groupAdmin", "-password -confirmPassword");
+
+  if (!updatedGroup) {
+    return res.status(400).json("Chat does't exist");
+  }
+  res.status(201).json(updatedGroup);
+});
+
+
+export const removePerson = asyncHandler(async (req, res) => {
+  const { chatId, userId } = req.body;
+
+  let updatedGroup = await Chat.findByIdAndUpdate(
+    chatId,
+    { $pull: { users: userId } },
+    { new: true }
+  )
+    .populate("users", "-password -confirmPassword")
+    .populate("groupAdmin", "-password -confirmPassword");
+
+  if (!updatedGroup) {
+    return res.status(400).json("Chat does't exist");
+  }
+  res.status(201).json(updatedGroup);
 });

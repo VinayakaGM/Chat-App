@@ -18,7 +18,7 @@ let chatSchema = new Schema(
     },
     groupAdmin:{
       type:Schema.Types.ObjectId,
-      ref:"Users"
+      ref:"User"
     }
   },
   {
