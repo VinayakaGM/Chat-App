@@ -1,6 +1,9 @@
 import { useState } from "react";
 import STYLE from "../css modules/signup.module.css";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { Box, Button, Input } from "@chakra-ui/react";
+
 
 const Signup = () => {
   let [userData, setUserData] = useState({
@@ -10,7 +13,8 @@ const Signup = () => {
     confirmPassword: "",
     // photo: "",
   });
-  let [photo,setPhoto] = useState("")
+  let [photo, setPhoto] = useState("");
+  let navigate = useNavigate()
 
   let data = (e) => {
     // console.log(e.target.value);
@@ -22,14 +26,16 @@ const Signup = () => {
     // console.log({ ...userData });
     let { data } = await axios.post(
       "http://localhost:5000/api/v1/user/signup",
-      { ...userData,photo },
+      { ...userData, photo },
       {
         headers: {
           "Content-type": "multipart/form-data",
         },
       }
     );
-    console.log(data);
+    localStorage.setItem("user", JSON.stringify(data));
+    // console.log(data);
+    navigate("/chats", {replace:true})
   };
 
   return (
@@ -37,7 +43,7 @@ const Signup = () => {
       <h1>SignUp</h1>
       <form action="" className={STYLE.signup_form} onSubmit={handleSubmit}>
         <label htmlFor="name">Name </label>
-        <input
+        <Input
           type="text"
           name="name"
           id="name"
@@ -45,7 +51,7 @@ const Signup = () => {
           onChange={data}
         />
         <label htmlFor="email">Email </label>
-        <input
+        <Input
           type="email"
           name="email"
           id="email"
@@ -53,7 +59,7 @@ const Signup = () => {
           onChange={data}
         />
         <label htmlFor="password">Password </label>
-        <input
+        <Input
           type="password"
           name="password"
           id="password"
@@ -61,7 +67,7 @@ const Signup = () => {
           onChange={data}
         />
         <label htmlFor="confirmPassword">Confirm Password </label>
-        <input
+        <Input
           type="password"
           name="confirmPassword"
           value={userData.confirmPassword}
@@ -69,7 +75,8 @@ const Signup = () => {
           onChange={data}
         />
         <label htmlFor="photo">Upload Photo</label>
-        <input
+        <Input
+          height={"24px"}
           type="file"
           name="photo"
           id="photo"
@@ -77,12 +84,12 @@ const Signup = () => {
           className={STYLE.photo}
           onChange={(e) => setPhoto(e.target.files[0])}
         />
-        <div className={STYLE.signup_btns}>
-          <button className={STYLE.btn}>Signup</button>
-          <button className={STYLE.btn} type="reset">
+        <Box mt={"20px"} display={"flex"} gap={"6px"}>
+          <Button colorScheme='blue' size='md' flex={"1"}>Signup</Button>
+          <Button colorScheme='blue' size='md' type="reset" flex={"1"}>
             Clear
-          </button>
-        </div>
+          </Button>
+        </Box>
       </form>
     </div>
   );

@@ -9,7 +9,7 @@
   }
   
   .signup_form {
-      height: 420px;
+      height: 460px;
       width: 300px;
       /* border: 1px solid red; */
       display: flex;
@@ -33,7 +33,7 @@
 }
 
 .signup_form .btn {
-    margin-top: 5px;
+    margin-top: 15px;
     padding: 10px 20px;
     font-size: 1.2rem;
     cursor: pointer;
@@ -47,8 +47,8 @@
     opacity: 0.9;
 }
 
-.signup_btns {
+/* .signup_btns {
     display: flex;
     justify-content: space-around;
     align-items: center;
-}
+} */

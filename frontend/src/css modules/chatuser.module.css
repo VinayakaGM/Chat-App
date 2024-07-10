@@ -1,0 +1,23 @@
+
+.main{
+    height: 80vh;
+    width: 100%;
+   display: flex;
+   justify-content: space-evenly;
+   align-items: center;
+}
+
+.left_section{
+    height: 80vh;
+    width: 30%;
+}
+.right_section{
+    height: 80vh;
+    width: 70%;
+}
+
+.single_chat{
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-end;
+}

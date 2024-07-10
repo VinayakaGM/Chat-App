@@ -1,5 +1,9 @@
 import { useState } from "react";
 import STYLE from "../css modules/login.module.css";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { Button, Input, Text } from "@chakra-ui/react";
+
 // import { ToastContainer, toast } from "react-toastify";
 
 const Login = () => {
@@ -7,31 +11,44 @@ const Login = () => {
     email: "",
     password: "",
   });
+  let navigate = useNavigate();
 
   let data = (e) => {
     // console.log(e.target.value);
     setLoginData({ ...loginData, [e.target.name]: e.target.value });
   };
 
-  let handleSubmit = (e) => {
+  let handleSubmit = async (e) => {
     e.preventDefault();
-    console.log({ ...loginData });
+    // console.log({ ...loginData });
     // toast.success("Hello")
+    let { data } = await axios.post(
+      "http://localhost:5000/api/v1/user/login",
+      { loginData },
+      {
+        headers: {
+          "Content-type": "application/json",
+        },
+      }
+    );
+    localStorage.setItem("user", JSON.stringify(data));
+    // console.log(data);
+    navigate("/chats", { replace: true });
   };
-
 
   return (
     <div className={STYLE.login_container}>
       {/* <ToastContainer/> */}
-      <h1>Login</h1>
+      <Text fontSize={"3xl"}>Login</Text>
       <form action="" className={STYLE.login_form} onSubmit={handleSubmit}>
         <label htmlFor="email">Email </label>
-        <input type="email" name="email" id="email" onChange={data} />
+        <Input type="email" name="email" id="email" onChange={data} />
         <label htmlFor="password">Password </label>
-        <input type="password" name="password" id="password" onChange={data} />
-        <button className={STYLE.btn}>
+        <Input type="password" name="password" id="password" onChange={data} />
+        {/* <Button className={STYLE.btn}>Login</Button> */}
+        <Button colorScheme="blue" mt={"8px"} p={"12px"} borderRadius={"100px"} size="md">
           Login
-        </button>
+        </Button>
       </form>
     </div>
   );
