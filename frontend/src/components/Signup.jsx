@@ -2,7 +2,7 @@ import { useState } from "react";
 import STYLE from "../css modules/signup.module.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { Box, Button, Input } from "@chakra-ui/react";
+import { Box, Button, Input, useToast } from "@chakra-ui/react";
 
 
 const Signup = () => {
@@ -14,6 +14,8 @@ const Signup = () => {
     // photo: "",
   });
   let [photo, setPhoto] = useState("");
+
+  const toast = useToast()
   let navigate = useNavigate()
 
   let data = (e) => {
@@ -34,6 +36,12 @@ const Signup = () => {
       }
     );
     localStorage.setItem("user", JSON.stringify(data));
+    toast({
+      title: 'Registered successfully',
+      status: 'success',
+      duration: 9000,
+      isClosable: true,
+    })
     // console.log(data);
     navigate("/chats", {replace:true})
   };

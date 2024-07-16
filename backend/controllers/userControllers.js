@@ -11,7 +11,7 @@ export const signup = asyncHandler(async (req, res) => {
   //   return res.status(400).json({ errors: errors.array() });
   // }
   let { name, email, password, confirmPassword } = req.body;
-  const existingUser = await User.findOne({ email });
+  let existingUser = await User.findOne({ email });
   // console.log(name, email, password, confirmPassword);
   if (existingUser) {
     // return res.status(400).json({
@@ -30,6 +30,10 @@ export const signup = asyncHandler(async (req, res) => {
   });
 
   let token = await genToken(newUser._id);
+  newUser = await User.findById(newUser._id).select({
+    password: 0,
+    confirmPassword: 0,
+  });
 
   res.status(200).json({
     success: true,
@@ -48,7 +52,7 @@ export const signup = asyncHandler(async (req, res) => {
 export const login = asyncHandler(async (req, res, next) => {
   // try {
   let { email, password } = req.body;
-  const existingUser = await User.findOne({ email });
+  let existingUser = await User.findOne({ email });
   // console.log(existingUser);
   if (
     !existingUser ||
@@ -62,6 +66,10 @@ export const login = asyncHandler(async (req, res, next) => {
     // });
   }
   let token = await genToken(existingUser._id);
+  existingUser = await User.findById(existingUser._id).select({
+    password: 0,
+    confirmPassword: 0,
+  });
   res.status(200).json({
     success: true,
     user: existingUser,
@@ -80,13 +88,13 @@ export const searchUsers = async (req, res, next) => {
   let userId = req.userId;
   let keyword = req.query.search
     ? {
-        or$: [
+        $or: [
           { name: { $regex: req.query.search, $options: "i" } },
           { email: { $regex: req.query.search, $options: "i" } },
         ],
       }
     : {};
-
+  console.log(req.query.search);
   let users = await User.find(keyword)
     .find({
       _id: { $ne: userId },

@@ -1,5 +1,4 @@
 import {
-  Avatar,
   Box,
   Button,
   Text,
@@ -14,19 +13,63 @@ import {
   Input,
   Menu,
   MenuButton,
+  useToast,
 } from "@chakra-ui/react";
 import { BellIcon, SearchIcon } from "@chakra-ui/icons";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import ProfileMenu from "./ProfileMenu";
+import axios from "axios";
+import ChatLoading from "./ChatLoading";
+import UserList from "./UserList";
 
 const Chatnav = ({
-  user: {
+  user: {token,
     user: { name, photo, email },
   },
 }) => {
+  const [search, setSearch] = useState("");
+  const [searchUsers, setSearchUsers] = useState([]);
+  const [loading, setLoading] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const btnRef = useRef();
-  
+
+  const toast = useToast();
+
+  const handleSearch = async () => {
+    if (!search) {
+      return toast({
+        title: "Please enter a search term",
+        status: "warning",
+        duration: 9000,
+        isClosable: true,
+      });
+    }
+    try {
+      setLoading(true);
+      let config = {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      };
+      const { data } = await axios.get(
+        `http://localhost:5000/api/v1/user?search=${search}`,
+        config
+      );
+      console.log(data);
+      setLoading(false);
+      setSearchUsers(data);
+      setSearch("");
+    } catch (error) {
+      toast({
+        title: "Couldn't get users",
+        status: "error",
+        duration: 9000,
+        isClosable: true,
+      });
+      setLoading(false);
+    }
+  };
+
   return (
     <Box
       display="flex"
@@ -49,7 +92,18 @@ const Chatnav = ({
           <DrawerHeader>Search users</DrawerHeader>
 
           <DrawerBody>
-            <Input placeholder="Type here..." />
+            {/* <Input placeholder="Type here..." /> */}
+            <Box display="flex" gap="1em">  <Input
+              placeholder="Search by name or email"
+              onChange={(e) => setSearch(e.target.value)}
+              value={search}
+            />
+            <Button onClick={handleSearch}>Go</Button></Box>
+            <Box>
+              {loading ? <ChatLoading/> : searchUsers.map(user=>{
+                return <UserList key={user._id} user={user}/>
+              })}
+            </Box>
           </DrawerBody>
 
           <DrawerFooter>
@@ -73,8 +127,7 @@ const Chatnav = ({
           </MenuButton>
         </Menu>
 
-        <ProfileMenu name={name} photo={photo} email={email}/>
-        
+        <ProfileMenu name={name} photo={photo} email={email} />
       </Box>
     </Box>
   );
