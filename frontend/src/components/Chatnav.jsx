@@ -21,6 +21,7 @@ import ProfileMenu from "./ProfileMenu";
 import axios from "axios";
 import ChatLoading from "./ChatLoading";
 import UserList from "./UserList";
+import { ChatState } from "../context/ChatContext";
 
 const Chatnav = ({
   user: {token,
@@ -31,9 +32,39 @@ const Chatnav = ({
   const [searchUsers, setSearchUsers] = useState([]);
   const [loading, setLoading] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const btnRef = useRef();
+  const { user,chats, setChats, selectedChat, setSelectedChat } = ChatState();
 
+  const btnRef = useRef();
   const toast = useToast();
+
+  const accessChat = async (id) => {
+    try {
+      let config = {
+        headers: {
+          "Authorization": `Bearer ${token}`,
+        },
+      };
+      let { data } = await axios.post(
+        `http://localhost:5000/api/v1/chat/`,
+        { userId: id },
+        config
+      );
+      console.log(data);
+      // if chat already exists in chats no need to add it otherwise add it
+      if (!chats.find((chat) => chat._id === data._id))
+        setChats([...chats, data]);
+      setSelectedChat(data);
+      setLoading(false);
+      onClose();
+    } catch (error) {
+      toast({
+        title: "Couldn't access chat",
+        status: "error",
+        duration: 9000,
+        isClosable: true,
+      });
+    }
+  };
 
   const handleSearch = async () => {
     if (!search) {
@@ -101,7 +132,7 @@ const Chatnav = ({
             <Button onClick={handleSearch}>Go</Button></Box>
             <Box>
               {loading ? <ChatLoading/> : searchUsers.map(user=>{
-                return <UserList key={user._id} user={user}/>
+                return <UserList key={user._id} user={user} handleFunction={() => accessChat(user._id)}/>
               })}
             </Box>
           </DrawerBody>

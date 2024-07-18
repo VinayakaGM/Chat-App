@@ -1,6 +1,6 @@
 
 
-export const Chat = () => {
+export const ChatWindow = () => {
   return (
     <div>Chat window</div>
   )

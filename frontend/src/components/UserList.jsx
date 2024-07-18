@@ -1,6 +1,6 @@
 import { Avatar, Box, Stack, Text } from "@chakra-ui/react";
 
-const UserList = ({ user }) => {
+const UserList = ({ user,handleFunction }) => {
   return (
     <Box
       display="flex"
@@ -11,6 +11,8 @@ const UserList = ({ user }) => {
       color="white"
       padding="1em"
       borderRadius="8px"
+      onClick={handleFunction}
+      cursor={"pointer"}
     >
       <Avatar name={user.name} src={user.photo} size={"sm"} />
       <Stack spacing={1}>
