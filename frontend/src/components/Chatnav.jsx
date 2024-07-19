@@ -24,7 +24,8 @@ import UserList from "./UserList";
 import { ChatState } from "../context/ChatContext";
 
 const Chatnav = ({
-  user: {token,
+  user: {
+    token,
     user: { name, photo, email },
   },
 }) => {
@@ -32,7 +33,7 @@ const Chatnav = ({
   const [searchUsers, setSearchUsers] = useState([]);
   const [loading, setLoading] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { user,chats, setChats, selectedChat, setSelectedChat } = ChatState();
+  const { chats, setChats, selectedChat, setSelectedChat } = ChatState();
 
   const btnRef = useRef();
   const toast = useToast();
@@ -41,7 +42,7 @@ const Chatnav = ({
     try {
       let config = {
         headers: {
-          "Authorization": `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
       };
       let { data } = await axios.post(
@@ -79,7 +80,7 @@ const Chatnav = ({
       setLoading(true);
       let config = {
         headers: {
-          'Authorization': `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
       };
       const { data } = await axios.get(
@@ -124,16 +125,29 @@ const Chatnav = ({
 
           <DrawerBody>
             {/* <Input placeholder="Type here..." /> */}
-            <Box display="flex" gap="1em">  <Input
-              placeholder="Search by name or email"
-              onChange={(e) => setSearch(e.target.value)}
-              value={search}
-            />
-            <Button onClick={handleSearch}>Go</Button></Box>
+            <Box display="flex" gap="1em">
+              {" "}
+              <Input
+                placeholder="Search by name or email"
+                onChange={(e) => setSearch(e.target.value)}
+                value={search}
+              />
+              <Button onClick={handleSearch}>Go</Button>
+            </Box>
             <Box>
-              {loading ? <ChatLoading/> : searchUsers.map(user=>{
-                return <UserList key={user._id} user={user} handleFunction={() => accessChat(user._id)}/>
-              })}
+              {loading ? (
+                <ChatLoading />
+              ) : (
+                searchUsers.map((user) => {
+                  return (
+                    <UserList
+                      key={user._id}
+                      user={user}
+                      handleFunction={() => accessChat(user._id)}
+                    />
+                  );
+                })
+              )}
             </Box>
           </DrawerBody>
 
