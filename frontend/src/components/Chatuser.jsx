@@ -74,16 +74,22 @@ export const Chatusers = () => {
                 marginBottom="0.5em"
                 borderRadius="0.5em"
                 padding="1em"
-                backgroundColor="teal"
-                color="white"
+                backgroundColor={selectedChat === chat._id ? "transparent" : "teal"}
+                color={selectedChat === chat._id ? "black" : "white"}
                 fontWeight="bold"
-                _hover={{ backgroundColor: "#ddd" }}
+                _hover={{ backgroundColor: "teal.500",color:"white" }}
                 cursor="pointer"
+                onClick={() => setSelectedChat(chat)}
               >
-                <Text fontWeight="bold">
+                {/* <Text fontWeight="bold">
                   {chat.isGroupChat
                     ? chat.chatName
                     : getuserName(loggedUser.user._id, chat.users)}
+                </Text> */}
+                <Text fontWeight="bold">
+                  {chat.isGroupChat
+                    ? chat.chatName
+                    : getuserName(user.user._id, chat.users)}
                 </Text>
               </Box>
             );

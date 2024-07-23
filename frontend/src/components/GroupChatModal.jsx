@@ -20,7 +20,7 @@ import UserList from "./UserList";
 import axios from "axios";
 import UserBadge from "./UserBadge";
 
-const GroupChatModal = ({children}) => {
+const GroupChatModal = ({ children }) => {
   let [groupName, setGroupName] = useState("");
   let [selectedUsers, setSelectedUsers] = useState([]);
   let [searchUsers, setSearchUsers] = useState([]);
@@ -54,6 +54,7 @@ const GroupChatModal = ({children}) => {
       console.log(data);
       setLoading(false);
       setSearchUsers(data);
+      
     } catch (error) {
       toast({
         title: "Couldn't fetch users",
@@ -62,6 +63,54 @@ const GroupChatModal = ({children}) => {
         isClosable: true,
       });
       setLoading(false);
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (!groupName || !selectedUsers) {
+      toast({
+        title: "Please fill all the fields",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom",
+      });
+      return;
+    }
+
+    try {
+      let config = {
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
+      };
+      let { data } = await axios.post(
+        `http://localhost:5000/api/v1/chat/group`,
+        {
+          chatName: groupName,
+          users: JSON.stringify(selectedUsers.map((u) => u._id)),
+          isGroupChat: true,
+        },
+        config
+      );
+
+      console.log(data);
+      setChats([data, ...chats]);
+      setGroupName("");
+      setSelectedUsers([]);
+      setSearch("");
+      setSearchUsers([]);
+      onClose();
+
+    } catch (error) {
+      toast({
+        title: "Error Occured",
+        description: "Failed to Create the Chat",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom",
+      });
     }
   };
 
@@ -122,6 +171,9 @@ const GroupChatModal = ({children}) => {
           <ModalFooter>
             <Button colorScheme="blue" mr={3} onClick={onClose}>
               Close
+            </Button>
+            <Button colorScheme="blue" mr={3} onClick={handleSubmit}>
+              Create
             </Button>
           </ModalFooter>
         </ModalContent>

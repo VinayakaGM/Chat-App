@@ -1,4 +1,10 @@
 export const getuserName = (loggedUserId, users) => {
-  console.log("chatLogics", loggedUserId, users);
-  return users.find((user) => user._id !== loggedUserId).name;
+  // console.log("chatLogics", loggedUserId, users);
+  return users[0].name!==loggedUserId?users[0].name:users[1].name;
 };
+
+
+export const getuserFull=(loggedUserId,users)=>{
+  console.log("users",users);
+  return users[0]._id!==loggedUserId?users[0]:users[1];
+}

@@ -54,7 +54,7 @@ const Chatnav = ({
       // if chat already exists in chats no need to add it otherwise add it
       if (!chats.find((chat) => chat._id === data._id))
         setChats([...chats, data]);
-      setSelectedChat(data);
+      setSelectedChat(data); 
       setLoading(false);
       onClose();
     } catch (error) {
