@@ -65,8 +65,8 @@ export const login = asyncHandler(async (req, res, next) => {
     //   message: "user does not exist, please singup",
     // });
   }
-  let token = await genToken(existingUser._id);
-  existingUser = await User.findById(existingUser._id).select({
+  let token = await genToken(existingUser?._id);
+  existingUser = await User.findById(existingUser?._id).select({
     password: 0,
     confirmPassword: 0,
   });
@@ -94,13 +94,15 @@ export const searchUsers = async (req, res, next) => {
         ],
       }
     : {};
-  console.log(req.query.search);
+  // console.log(req.query.search);
   let users = await User.find(keyword)
     .find({
       _id: { $ne: userId },
     })
     .exec();
 
+    console.log(users);
+    
   if (!users) {
     let err = new Error("Users not found");
     next(err);

@@ -10,7 +10,8 @@ export const ChatWindow = () => {
     <Box
       display="flex"
       flexDir="column"
-      minHeight="85vh"
+      height={"84vh"}
+      minHeight="80vh"
       boxShadow="0 5px 5px 5px rgba(0,0,0,0.4)"
       padding="1em"
       width="100%"

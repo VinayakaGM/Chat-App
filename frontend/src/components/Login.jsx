@@ -4,10 +4,12 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Button, Input, Text } from "@chakra-ui/react";
 import { useToast } from "@chakra-ui/react";
+import { ChatState } from "../context/ChatContext";
 
 // import { ToastContainer, toast } from "react-toastify";
 
 const Login = () => {
+  const {user,setUser} = ChatState()
   let [loginData, setLoginData] = useState({
     email: "",
     password: "",
@@ -33,6 +35,7 @@ const Login = () => {
         },
       }
     );
+    setUser(data)
     localStorage.setItem("user", JSON.stringify(data));
     toast({
       title: 'Login successful',

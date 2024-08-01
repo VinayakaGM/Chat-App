@@ -26,12 +26,23 @@ const Signup = () => {
   let handleSubmit = async (e) => {
     e.preventDefault();
     // console.log({ ...userData });
+
+    if (!userData) {
+      toast({
+        title: `Please fill all the fields`,
+        status: "error",
+        isClosable: true,
+      });
+      return;
+    }
+
+
     let { data } = await axios.post(
       "http://localhost:5000/api/v1/user/signup",
       { ...userData, photo },
       {
         headers: {
-          "Content-type": "multipart/form-data",
+          "Content-type": "application/json",
         },
       }
     );
@@ -43,7 +54,7 @@ const Signup = () => {
       isClosable: true,
     })
     // console.log(data);
-    navigate("/chats", {replace:true})
+    navigate("/login", {replace:true})
   };
 
   return (
@@ -93,7 +104,7 @@ const Signup = () => {
           onChange={(e) => setPhoto(e.target.files[0])}
         />
         <Box mt={"20px"} display={"flex"} gap={"6px"}>
-          <Button colorScheme='blue' size='md' flex={"1"}>Signup</Button>
+          <Button colorScheme='blue' type="submit" size='md' flex={"1"}>Signup</Button>
           <Button colorScheme='blue' size='md' type="reset" flex={"1"}>
             Clear
           </Button>

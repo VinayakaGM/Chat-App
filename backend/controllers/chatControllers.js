@@ -58,18 +58,35 @@ export const accessChat = asyncHandler(async (req, res, next) => {
 //@access         Private
 
 export const fetchChats = asyncHandler(async (req, res, next) => {
-  let chats = await Chat.find({ users: { $elemMatch: { $eq: req.userId } } })
-    .populate("users", "-password")
-    .populate("groupAdmin", "-password")
-    .populate("latestMessage")
-    .sort({ updatedAt: -1 });
+  // let chats = await Chat.find({ users: { $elemMatch: { $eq: req.userId } } })
+  //   .populate("users", "-password")
+  //   .populate("groupAdmin", "-password")
+  //   .populate("latestMessage")
+  //   .sort({ updatedAt: -1 });
 
-  let finalChats = await Chat.populate(chats, {
-    path: "latestMessage.sender",
-    select: "name email photo",
-  });
+  // let finalChats = await Chat.populate(chats, {
+  //   path: "latestMessage.sender",
+  //   select: "name email photo",
+  // });
 
-  res.status(200).json(finalChats);
+  // res.status(200).json(finalChats);
+  try {
+    let chats = await Chat.find({ users: { $elemMatch: { $eq: req.userId } } })
+      .populate("users", "-password -confirmPassword")
+      .populate("groupAdmin", "-password -confirmPassword")
+      .populate("latestMessage")
+      .sort({ updatedAt: -1 });
+    if (chats.length === 0) {
+      return res.status(200).json("No chats found");
+    }
+    let finalChats = await Chat.populate(chats, {
+      path: "latestMessage.sender",
+      select: "name email photo",
+    });
+    res.status(200).json(finalChats);
+  } catch (error) {
+    res.status(400).json(error.message);
+  }
 });
 
 //@description   create group chat
@@ -150,7 +167,6 @@ export const addPerson = asyncHandler(async (req, res) => {
   }
   res.status(201).json(updatedGroup);
 });
-
 
 export const removePerson = asyncHandler(async (req, res) => {
   const { chatId, userId } = req.body;

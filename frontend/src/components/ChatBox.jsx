@@ -6,7 +6,7 @@ import { Box } from "@chakra-ui/react";
 
 export const ChatBox = () => {
   let { user } = ChatState();
-  console.log("user", user);
+  // console.log("user", user);
   return (
     <div>
       {user && <Chatnav user={user} />}
