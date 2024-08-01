@@ -5,8 +5,9 @@ import userRouter from './routes/userRoutes.js';
 import cors from 'cors'
 import { globalErrorHandler } from './middlewares/globalErrorHandler.js';
 import chatRoute from './routes/chatRoute.js';
+import messageRouter from './routes/messageRoutes.js';
 const app = express();
-dotenv.config()
+dotenv.config() 
 db()
 
 //middlewares
@@ -17,10 +18,11 @@ app.use(express.urlencoded({extended: true}))
 //user
 app.use("/api/v1/user", userRouter)
 app.use("/api/v1/chat",chatRoute)
+app.use("/api/v1/message",messageRouter)
 
 app.all("*", (req,res,next) => {
     let err = new Error(`Page not found: ${req.originalUrl}`)
-    err.status(404)
+    err.statusCode=404
     next(err)
 })
 app.use(globalErrorHandler)
