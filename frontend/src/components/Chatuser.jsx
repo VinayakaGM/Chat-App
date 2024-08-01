@@ -23,6 +23,7 @@ export const Chatusers = () => {
         "http://localhost:5000/api/v1/chat",
         config
       );
+      // console.log(data);
       setChats(data);
     } catch (error) {
       toast({
@@ -42,13 +43,13 @@ export const Chatusers = () => {
     if (user) {
       fetchChats();
     }
-  }, [user]);
+  }, []);
 
   return (
     <Box
       width="35%"
-      // height="100%"
-      minHeight={"85vh"}
+      height={"84vh"}
+      minHeight={"80vh"}
       boxShadow="0 5px 5px 5px rgba(0,0,0,0.4)"
       padding="1em"
       marginTop="1em"
@@ -67,7 +68,9 @@ export const Chatusers = () => {
       </Box>
       <Box>
         <Stack display="flex" flexDirection="column" marginTop={"1.5em"}> 
-          {chats.map((chat) => {
+          {/* {chats.map((chat) => { */}
+            {Array.isArray(chats)&&
+              chats?.map((chat) => {
             return (
               <Box
                 key={chat._id}
