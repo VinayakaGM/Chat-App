@@ -3,8 +3,10 @@ import { Chatusers } from "./Chatuser";
 import { ChatWindow } from "./ChatWindow";
 import { ChatState } from "../context/ChatContext";
 import { Box } from "@chakra-ui/react";
+import { useState } from "react";
 
 export const ChatBox = () => {
+  const [fetchAgain, setFetchAgain] = useState(false);
   let { user } = ChatState();
   // console.log("user", user);
   return (
@@ -14,7 +16,9 @@ export const ChatBox = () => {
       <ChatWindow /> */}
       <Box display={"flex"}>
         {user && <Chatusers />}
-        {user && <ChatWindow />}
+        {user && (
+          <ChatWindow fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} />
+        )}
       </Box>
     </div>
   );

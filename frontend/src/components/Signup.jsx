@@ -3,6 +3,7 @@ import STYLE from "../css modules/signup.module.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Box, Button, Input, useToast } from "@chakra-ui/react";
+import { ChatState } from "../context/ChatContext";
 
 
 const Signup = () => {
@@ -14,7 +15,8 @@ const Signup = () => {
     // photo: "",
   });
   let [photo, setPhoto] = useState("");
-
+  const {setUser} = ChatState();
+  
   const toast = useToast()
   let navigate = useNavigate()
 
@@ -27,7 +29,7 @@ const Signup = () => {
     e.preventDefault();
     // console.log({ ...userData });
 
-    if (!userData) {
+    if (!userData || !photo) {
       toast({
         title: `Please fill all the fields`,
         status: "error",
@@ -42,10 +44,11 @@ const Signup = () => {
       { ...userData, photo },
       {
         headers: {
-          "Content-type": "application/json",
+          "content-type": "application/json",
         },
       }
     );
+    setUser(data)
     localStorage.setItem("user", JSON.stringify(data));
     toast({
       title: 'Registered successfully',

@@ -13,19 +13,21 @@ import { ViewIcon } from "@chakra-ui/icons";
 import ProfileModal from "./ProfileModal";
 import axios from "axios";
 
-const SingleChat = () => {
+const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   let { user, selectedChat, setSelectedChat } = ChatState();
+  console.log("user", user);
+
   let [loading, setLoading] = useState(false);
   let toast = useToast();
-  let [messageValue, setMessageValue] = useState();
-  let [messages, setMessages] = useState();
+  let [messageValue, setMessageValue] = useState("");
+  let [messages, setMessages] = useState([]);
   console.log("selectedChat", selectedChat);
 
   const fetchMessages = async () => {
     if (!selectedChat) return;
     try {
       let config = {
-        Headers: {
+        headers: {
           "content-type": "application/json",
           Authorization: `Bearer ${user.token}`,
         },
@@ -39,6 +41,7 @@ const SingleChat = () => {
       setLoading(false);
       toast({
         title: "Error sending message",
+        description: error.response?.data?.message || "Please try again",
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -48,7 +51,7 @@ const SingleChat = () => {
 
   useEffect(() => {
     fetchMessages();
-  }, [selectedChat]);
+  }, [selectedChat, user]);
   const sendMessage = async (e) => {
     try {
       setLoading(true);

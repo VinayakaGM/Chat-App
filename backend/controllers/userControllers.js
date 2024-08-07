@@ -26,7 +26,7 @@ export const signup = asyncHandler(async (req, res) => {
     email,
     password,
     confirmPassword,
-    photo: req.file.path,
+    photo: req.file?.path,
   });
 
   let token = await genToken(newUser._id);

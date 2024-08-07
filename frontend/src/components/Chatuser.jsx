@@ -6,7 +6,7 @@ import { getuserName } from "../config/chatLogics.js";
 import axios from "axios";
 import GroupChatModal from "./GroupChatModal.jsx";
 
-export const Chatusers = () => {
+export const Chatusers = ({fetchAgain}) => {
   let [loggedUser, setLoggedUser] = useState(null);
   const { user, chats, setChats, selectedChat, setSelectedChat } = ChatState();
   // console.log("chats in chatUsers",chats);
@@ -43,7 +43,7 @@ export const Chatusers = () => {
     if (user) {
       fetchChats();
     }
-  }, []);
+  }, [fetchAgain]);
 
   return (
     <Box
